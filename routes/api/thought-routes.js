@@ -27,6 +27,6 @@ router
 .delete(removeThought);
 
 // Set up DELETE(Reaction) at /api/<userId>/<thoughtId>/<reactionId>
-router.route('/:userId/:thoughtId/:reactionId').delete(removeReaction);
+router.route('/:userId/:thoughtId/reactions/:reactionId').delete(removeReaction);
 
 module.exports = router;

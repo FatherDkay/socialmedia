@@ -9,6 +9,11 @@ const userController = {
         select: '-__v'
       })
       .select('-__v')
+      .populate({
+        path: 'friends',
+        select: '-__v -thoughts -email -friends',
+      })
+      .select('-__v')
       .sort({ _id: -1 })
         .then(dbUserData => res.json(dbUserData))
         .catch(err => {
@@ -26,7 +31,6 @@ const userController = {
       .select('-__v')
       .sort({ _id: -1 })
         .then(dbUserData => {
-          // If no user is found, send 404
           if (!dbUserData) {
             res.status(404).json({ message: 'No user found with this id!' });
             return;
@@ -67,6 +71,31 @@ const userController = {
         res.json(dbUserData);
       })
       .catch(err => res.status(400).json(err));
+  },
+  addFriend( { params, body }, res) {
+    User.findOneAndUpdate({ _id: params.userId }, {$push: {friends: params.friendId}})
+    .then(dbUserData => {
+      if (!dbUserData) {
+        res.status(404).json({ message: 'No user found with this id!' });
+        return;
+      }
+      res.json(dbUserData);
+    })
+    .catch(err => res.status(400).json(err));
+  },
+  removeFriend( { params, body }, res) {
+    console.log(params.userId)
+    User.findOneAndUpdate(
+      { _id: params.userId },
+      {$pull: {friends: params.friendId}})
+    .then(dbUserData => {
+      if (!dbUserData) {
+        res.status(404).json({ message: 'No user found with this id!' });
+        return;
+      }
+      res.json(dbUserData);
+    })
+    .catch(err => res.status(400).json(err));
   }
 }
 
