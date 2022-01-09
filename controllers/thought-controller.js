@@ -1,4 +1,5 @@
 const { Thought, User } = require('../models');
+const { Types } = require ("mongoose");
 
 const thoughtController = {
     // get all thoughts
@@ -105,7 +106,8 @@ const thoughtController = {
       console.log("reactionId: " + params.reactionId)
       Thought.findOneAndUpdate(
       { _id: params.thoughtId },
-      {$pull: {reactions: params.reactionId}})
+      {$pull: {reactions: {reactionId:Types.ObjectId(params.reactionId)}}},
+      {runValidators: true,new: true})
       .then(dbThoughtData => {
         if (!dbThoughtData) {
           res.status(404).json({ message: 'No thought found with this id!' });
@@ -113,7 +115,7 @@ const thoughtController = {
         }
         res.json(dbThoughtData);
       })
-      .catch(err => res.status(400).json(err));
+      .catch(err => console.log(err));
     }
 };
 
